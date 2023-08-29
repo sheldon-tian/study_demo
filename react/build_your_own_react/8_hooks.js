@@ -3,6 +3,9 @@ let currentRoot = null; // previous fiber tree root
 let wipRoot = null;
 let deletions = null; // 更新时需要删除旧 fiber array
 
+let wipFiber = null;
+let hookIndex = null;
+
 const isEvent = key => key.startsWith('on');
 const isProperty = key => key !== 'children' && !isEvent(key);
 const isNew = (prev, next) => key => prev[key] !== next[key];
@@ -196,8 +199,39 @@ function reconcileChildren(wipFiber, elements) {
 
 // 创建函数组件 fiber
 function updateFunctionComponent(fiber) {
+    wipFiber = fiber;
+    hookIndex = 0;
+    wipFiber.hooks = [];
     const children = [fiber.type(fiber.props)];
     reconcileChildren(fiber, children);
+}
+
+function useState(initial) {
+    const oldHook = wipFiber.alternate && wipFiber.alternate.hooks && wipFiber.alternate.hooks[hookIndex];
+    const hook = {
+        state: oldHook ? oldHook.state : initial,
+        queue: [],
+    };
+
+    const actions = oldHook ? oldHook.queue : [];
+    actions.forEach(action => {
+        hook.state = action(hook.state);
+    });
+
+    const setState = action => {
+        hook.queue.push(action);
+        wipRoot = {
+            dom: currentRoot.dom,
+            props: currentRoot.props,
+            alternate: currentRoot,
+        };
+        nextUnitOfWork = wipRoot;
+        deletions = [];
+    }
+
+    wipFiber.hooks.push(hook);
+    hookIndex++;
+    return [hook.state, setState];
 }
 
 // 创建类组件 fiber
@@ -267,6 +301,7 @@ const render = (element, container) => {
 const Didact = {
     createElement,
     render,
+    useState,
 };
 
 // jsx => js
@@ -285,15 +320,14 @@ const element = Didact.createElement(App, {
 ```
 
 /** @jsx Didact.createElement */
-function App(props) {
-    return <h1>Hi {props.name}</h1>;
+function Counter(props) {
+    const [state, setState] = Didact.useState(1);
+    return (
+        <h1 onClick={() => setState(c => c + 1)}>
+            Count: {state}
+        </h1>
+    );
 }
-const element = <App name='foo' />;
+const element = <Counter />;
 const container = document.getElementById('root');
 Didact.render(element, container);
-
-// 函数组件的不同之处
-// - 函数组件的 fiber 没有 dom 节点
-// - children 来自运行该函数，而不是直接从 props
-
-// 总觉得在新增一个 new fiber 时 dom 最后都是空的？
