@@ -1,0 +1,28 @@
+{
+  "name": "zhihu-user-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "clear": "rm -rf lib/",
+    "build": "npm run clear && rollup -c",
+    "dev": "concurrently 'rollup -c -w' 'wds'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gary Tian",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "concurrently": "^8.2.2",
+    "rollup": "^4.9.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3",
+    "web-dev-server": "^3.0.27"
+  },
+  "dependencies": {
+    "@web/dev-server": "^0.4.1"
+  }
+}
