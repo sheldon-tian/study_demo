@@ -1,8 +1,8 @@
-const add = (x: number, y: number) => {
-    return x + y;
-}
+import { Crawler } from './crawler';
 
-(window as any).add = add;
+const userUrlBase = 'https://www.zhihu.com/people/';
+const userID = 'a-man-39-38';
 
-export default add;
+const crawler = new Crawler(userUrlBase + userID);
+
 
