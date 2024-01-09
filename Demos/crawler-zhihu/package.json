@@ -1,0 +1,27 @@
+{
+  "name": "crawler-zhihu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "npm run build && node lib/bundle.js",
+    "clear": "rm -rf lib/",
+    "build": "npm run clear && rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gary Tian",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "rollup": "^4.9.4",
+    "tslib": "^2.6.2"
+  },
+  "dependencies": {
+    "@types/superagent": "^8.1.1",
+    "cheerio": "^1.0.0-rc.12",
+    "superagent": "^8.1.2"
+  }
+}
